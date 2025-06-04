@@ -394,6 +394,18 @@
         el.textContent = text;
       }
     }
+    // 返回进度条颜色：绿色（0%）到红色（100%）
+    function getGradientColor(percentage) {
+      const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
+      const lerp = (start, end, t) => Math.round(start + (end - start) * t);
+      const p = clamp(Number(percentage), 0, 100) / 100;
+      const startColor = { r: 16, g: 185, b: 129 }; // #10b981
+      const endColor = { r: 239, g: 68, b: 68 };  // #ef4444
+      const r = lerp(startColor.r, endColor.r, p);
+      const g = lerp(startColor.g, endColor.g, p);
+      const b = lerp(startColor.b, endColor.b, p);
+      return `rgb(${r}, ${g}, ${b})`;
+    }
 
     function renderTrafficStats(trafficData) {
       const serverMap = new Map();
@@ -424,8 +436,6 @@
         }
       }
 
-      const isInline = !!document.querySelector('section.server-inline-list');
-      console.log(`[调试] 当前布局是 ${isInline ? 'inline' : 'standard'}`);
       serverMap.forEach((serverData, serverName) => {
         const targetElement = Array.from(document.querySelectorAll('section.grid.items-center.gap-2'))
           .find(el => el.textContent.trim().includes(serverName));
@@ -441,42 +451,47 @@
         const toFormatted = formatDate(serverData.to);
         const next_update = new Date(serverData.next_update).toLocaleString("zh-CN", { timeZone: "Asia/Shanghai" });
         const uniqueClassName = 'traffic-stats-for-server-' + serverData.id;
+        const progressColor = getGradientColor(percentage);
         let insertPosition = config.insertPosition;
 
         const containerDiv = targetElement.closest('div');
-        let oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1');
-        if (!oldSection) {
-          oldSection = containerDiv.querySelector('section.grid.grid-cols-5.items-center.gap-3');
-          insertPosition = 'after';
-        }
-        if (isInline) 
-        {
-          oldSection = containerDiv.querySelector('section.grid.grid-cols-9.items-center.gap-3');
-          insertPosition = 'after';
-        }
-        const existing = containerDiv.querySelector('.' + uniqueClassName);
+        if (!containerDiv) return;
 
-        if (config.showTrafficStats) {
-          if (existing) {
-            safeSetTextContent(existing, '.used-traffic', usedFormatted.value);
-            safeSetTextContent(existing, '.used-unit', usedFormatted.unit);
-            safeSetTextContent(existing, '.total-traffic', totalFormatted.value);
-            safeSetTextContent(existing, '.total-unit', totalFormatted.unit);
-            safeSetTextContent(existing, '.from-date', fromFormatted);
-            safeSetTextContent(existing, '.to-date', toFormatted);
-            safeSetTextContent(existing, '.percentage-value', percentage + '%');
-            safeSetTextContent(existing, '.next-update', `next update: ${next_update}`);
-            const progressBar = existing.querySelector('.progress-bar');
-            if (progressBar) {
-              progressBar.style.width = percentage + '%';
-            }
-            console.log(`[renderTrafficStats] 更新已存在的流量条目: ${serverName}`);
-          } else if (oldSection) {
-            const newElement = document.createElement('div');
-            newElement.classList.add('space-y-1.5', 'new-inserted-element', uniqueClassName);
-            newElement.style.width = '100%';
-            if (config.style === 1) {
-              newElement.innerHTML = `
+        const existing = containerDiv.querySelector('.' + uniqueClassName);
+        if (!config.showTrafficStats) {
+          if (existing) existing.remove();
+          return;
+        }
+
+        if (existing) {
+          safeSetTextContent(existing, '.used-traffic', usedFormatted.value);
+          safeSetTextContent(existing, '.used-unit', usedFormatted.unit);
+          safeSetTextContent(existing, '.total-traffic', totalFormatted.value);
+          safeSetTextContent(existing, '.total-unit', totalFormatted.unit);
+          safeSetTextContent(existing, '.from-date', fromFormatted);
+          safeSetTextContent(existing, '.to-date', toFormatted);
+          safeSetTextContent(existing, '.percentage-value', percentage + '%');
+          safeSetTextContent(existing, '.next-update', `next update: ${next_update}`);
+          const progressBar = existing.querySelector('.progress-bar');
+          if (progressBar) {
+            progressBar.style.width = percentage + '%';
+            progressBar.style.backgroundColor = progressColor;
+          }
+          console.log(`[renderTrafficStats] 更新已存在的流量条目: ${serverName}`);
+        }
+        else {
+          let oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1');
+          if (!oldSection) {
+            oldSection = containerDiv.querySelector('section.grid.items-center.gap-3');
+            insertPosition = 'after';
+          }
+          if (!oldSection) return;
+
+          const newElement = document.createElement('div');
+          newElement.classList.add('space-y-1.5', 'new-inserted-element', uniqueClassName);
+          newElement.style.width = '100%';
+          if (config.style === 1) {
+            newElement.innerHTML = `
                 <div class="flex items-center justify-between">
                   <div class="flex items-baseline gap-1">
                     <span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 used-traffic">${usedFormatted.value}</span>
@@ -493,11 +508,11 @@
                 </div>
                 <div class="relative h-1.5">
                   <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-                  <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%;"></div>
+                  <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; background-color: ${progressColor};"></div>
                 </div>
               `;
-            } else if (config.style === 2) {
-              newElement.innerHTML = `
+          } else if (config.style === 2) {
+            newElement.innerHTML = `
                 <div class="flex items-center justify-between">
                   <div class="flex items-baseline gap-1">
                     <span class="text-[10px] font-medium text-neutral-800 dark:text-neutral-200 used-traffic">${usedFormatted.value}</span>
@@ -510,7 +525,7 @@
                 </div>
                 <div class="relative h-1.5">
                   <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-                  <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%;"></div>
+                  <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; background-color: ${progressColor};"></div>
                 </div>
                 <div class="flex items-center justify-between">
                   <div class="text-[10px] text-neutral-500 dark:text-neutral-400">
@@ -521,17 +536,11 @@
                   <span class="text-[10px] text-neutral-500 dark:text-neutral-400">next update: ${next_update}</span>
                 </div>
               `;
-            }
-            if (insertPosition === 'before') oldSection.before(newElement);
-            else if (insertPosition === 'replace') oldSection.replaceWith(newElement);
-            else oldSection.after(newElement);
-            console.log(`[renderTrafficStats] 插入新流量条目: ${serverName}，插入方式: ${insertPosition}`);
           }
-        } else {
-          if (existing) {
-            existing.remove();
-            console.log(`[renderTrafficStats] 已隐藏流量条目: ${serverName}`);
-          }
+          if (insertPosition === 'before') oldSection.before(newElement);
+          else if (insertPosition === 'replace') oldSection.replaceWith(newElement);
+          else oldSection.after(newElement);
+          console.log(`[renderTrafficStats] 插入新流量条目: ${serverName}，插入方式: ${insertPosition}`);
         }
       });
     }
@@ -581,37 +590,52 @@
       }
     }
 
-    const observer = new MutationObserver(mutations => {
-      for (const mutation of mutations) {
-        if (mutation.type === 'childList') {
-          const nodes = [...mutation.addedNodes, ...mutation.removedNodes];
-          const matched = nodes.some(node => {
-            if (node.nodeType !== 1 || !node.querySelectorAll) return false;
-            return Array.from(node.querySelectorAll('span.text-muted-foreground'))
-              .some(el => Array.from(el.classList).some(cls => cls.includes('text-[')));
-          });
+    const TARGET_SELECTOR = 'section.server-card-list, section.server-inline-list';
 
-          if (matched) {
+    let currentSection = null;
+    let childObserver = null;
+
+    function observeSection(section) {
+      if (childObserver) {
+        childObserver.disconnect();
+        console.log('[监听] 断开旧的子节点监听');
+      }
+
+      currentSection = section;
+      console.log('[监听] 监听新的目标 section 子节点');
+
+      childObserver = new MutationObserver(mutations => {
+        for (const m of mutations) {
+          if (m.type === 'childList' && (m.addedNodes.length || m.removedNodes.length)) {
+            console.log('[监听] section 子节点变化，触发刷新');
             onDomChildListChange();
             break;
           }
         }
+      });
+
+      childObserver.observe(currentSection, { childList: true, subtree: false });
+      updateTrafficStats();
+    }
+
+    const sectionDetector = new MutationObserver(() => {
+      const section = document.querySelector(TARGET_SELECTOR);
+      if (section && section !== currentSection) {
+        observeSection(section);
       }
     });
 
-    const targetNode = document.querySelector('main') || document.body;
+    const root = document.querySelector('main') || document.body;
+    sectionDetector.observe(root, { childList: true, subtree: true });
+    console.log('[初始化] 启动 sectionDetector, 持续监听 section 切换');
 
-    observer.observe(targetNode, {
-      childList: true,
-      subtree: true
-    });
-
-    updateTrafficStats(true);  // 初始强制刷新
     startPeriodicRefresh();
 
     window.addEventListener('beforeunload', () => {
       if (trafficTimer) clearInterval(trafficTimer);
-      observer.disconnect();
+      if (childObserver) childObserver.disconnect();
+      sectionDetector.disconnect();
+      console.log('[清理] 卸载监听器和定时器');
     });
   })();
 </script>
