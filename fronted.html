@@ -24,8 +24,8 @@
     content: "";
     position: absolute;
     inset: 0;
-    backdrop-filter: blur(3px);
-    background-color: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(6px);
+    background-color: rgba(0, 0, 0, 0.3);
   }
 
   .light .bg-cover::after {
@@ -33,7 +33,7 @@
     position: absolute;
     inset: 0;
     backdrop-filter: blur(3px);
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgba(255, 255, 255, 0.3);
   }
 
   .text-green-600 {
@@ -447,6 +447,11 @@
         let oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1');
         if (!oldSection) {
           oldSection = containerDiv.querySelector('section.grid.grid-cols-5.items-center.gap-3');
+          insertPosition = 'after';
+        }
+        if (isInline) 
+        {
+          oldSection = containerDiv.querySelector('section.grid.grid-cols-9.items-center.gap-3');
           insertPosition = 'after';
         }
         const existing = containerDiv.querySelector('.' + uniqueClassName);
