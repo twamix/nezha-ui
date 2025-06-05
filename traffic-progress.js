@@ -8,7 +8,8 @@
         showTrafficStats: true,
         insertPosition: 'replace', // 可选：'after', 'before', 'replace'
         interval: 60000,           // 60秒刷新周期
-        toggleInterval: 5000         // 5秒切换标签信息, 0 为不切换
+        toggleInterval: 5000,      // 没5秒切换标签信息, 0 为不切换
+        duration: 500              // 切换时缓进缓出动画时间
     };
 
     if (config.toggleInterval > 0) {
