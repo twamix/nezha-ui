@@ -438,7 +438,10 @@
 
       serverMap.forEach((serverData, serverName) => {
         const targetElement = Array.from(document.querySelectorAll('section.grid.items-center.gap-2'))
-          .find(el => el.textContent.trim().includes(serverName));
+          .find(section => {
+            const firstText = section.querySelector('p.break-all.font-bold.tracking-tight.text-xs')?.textContent.trim();
+            return firstText === serverName;
+          });
         if (!targetElement) {
           //console.warn(`[renderTrafficStats] 未找到服务器 "${serverName}" (ID: ${serverData.id}) 的元素`);
           return;
