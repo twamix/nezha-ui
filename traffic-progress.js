@@ -426,7 +426,7 @@ const domObserver = (() => {
     toggleInterval: 5000,         // 标签内容切换间隔，毫秒，0为禁用
     duration: 500,                // 切换动画时长，毫秒
     apiUrl: '/api/v1/service',    // 数据接口地址
-    enableLog: true               // 是否启用日志
+    enableLog: false              // 是否启用日志
   };
 
   /**
