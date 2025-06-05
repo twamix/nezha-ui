@@ -457,7 +457,9 @@
         const containerDiv = targetElement.closest('div');
         if (!containerDiv) return;
 
-        const existing = containerDiv.querySelector('.' + uniqueClassName);
+        const existing = Array.from(containerDiv.querySelectorAll('.new-inserted-element')).find(el =>
+          el.classList.contains(uniqueClassName)
+        );
         if (!config.showTrafficStats) {
           if (existing) existing.remove();
           return;
