@@ -296,8 +296,3 @@ html.dark body {
 .dark .font-medium.opacity-50 {
   opacity: unset;
 }
-
-/* 不显示自带流量卡片 */
-.mt-4.w-full.mx-auto>div {
-  display: none;
-}
