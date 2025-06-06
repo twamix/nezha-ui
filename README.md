@@ -1,6 +1,7 @@
 # nezha-style
 ##### 后台添加
-```
+###### 自用的探针更改 
+```html
 <meta name="referrer" content="no-referrer">
 /* 自用的css格式 */
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-traffic@main/nezha-style.css">
@@ -15,7 +16,18 @@
     /* 自定义描述 */
     window.CustomDesc = "v2.games";
 </script>
-
+```
+###### 周期性流量进度条 
+```html
 /* 周期性流量进度条 */
+<script>
+  window.TrafficScriptConfig = {
+    showTrafficStats: true,    // 显示流量统计
+    interval: 60000,           // 60秒刷新缓存, 单位毫秒
+    toggleInterval: 4000,      // 4秒切换流量进度条右上角内容, 0秒不切换, 单位毫秒
+    duration: 500,             // 缓进缓出切换时间, 单位毫秒
+    enableLog: false           // 开启日志
+  };
+</script>
 <script src="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-traffic@main/traffic-progress.js"></script>
 ```
