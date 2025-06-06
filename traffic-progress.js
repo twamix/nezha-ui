@@ -227,7 +227,13 @@ const trafficRenderer = (() => {
         log(`更新流量条目: ${serverName}`);
       } else {
         // 插入新的流量条目元素
-        const oldSection = containerDiv.querySelector('section.grid.items-center.gap-3');
+        let oldSection = null;
+        if (config.insertAfter) {
+          oldSection = containerDiv.querySelector('section.flex.items-center.w-full.justify-between.gap-1')
+            || containerDiv.querySelector('section.grid.items-center.gap-3');
+        } else {
+          oldSection = containerDiv.querySelector('section.grid.items-center.gap-3');
+        }
         if (!oldSection) return;
 
         // 时间区间内容，用于切换显示
@@ -423,6 +429,7 @@ const domObserver = (() => {
   // 默认配置
   const defaultConfig = {
     showTrafficStats: true,
+    insertAfter: true,
     interval: 60000,
     toggleInterval: 5000,
     duration: 500,
