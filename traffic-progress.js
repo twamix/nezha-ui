@@ -427,7 +427,7 @@ const domObserver = (() => {
     toggleInterval: 5000,
     duration: 500,
     apiUrl: '/api/v1/service',
-    enableLog: true
+    enableLog: false
   };
   // 合并用户自定义配置
   const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
