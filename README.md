@@ -1,10 +1,10 @@
-# nezha-style
+# nezha-ui-mods
 ##### 后台添加
 ###### 自用的探针更改 
 ```html
 <meta name="referrer" content="no-referrer">
 /* 自用的css格式 */
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-traffic@main/nezha-style.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-ui-mods@main/nezha-style.css">
 /* 自用的探针修改 */
 <script>
     window.CustomBackgroundImage = "https://bing.img.run/rand_uhd.php"; /* 页面背景图 */
@@ -29,5 +29,5 @@
     enableLog: false           // 开启日志
   };
 </script>
-<script src="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-traffic@main/traffic-progress.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-ui-mods@main/traffic-progress.js"></script>
 ```
