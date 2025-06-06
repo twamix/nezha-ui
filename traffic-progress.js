@@ -419,15 +419,17 @@ const domObserver = (() => {
 
 // == 主程序入口 ==
 (function main() {
-  // 全局配置
-  const config = {
-    showTrafficStats: true,       // 是否显示流量统计
-    interval: 60000,              // 数据刷新间隔，毫秒
-    toggleInterval: 5000,         // 标签内容切换间隔，毫秒，0为禁用
-    duration: 500,                // 切换动画时长，毫秒
-    apiUrl: '/api/v1/service',    // 数据接口地址
-    enableLog: false              // 是否启用日志
+  // 默认配置
+  const defaultConfig = {
+    showTrafficStats: true,
+    interval: 60000,
+    toggleInterval: 5000,
+    duration: 500,
+    apiUrl: '/api/v1/service',
+    enableLog: false
   };
+  // 合并用户自定义配置
+  const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
 
   /**
    * 获取并刷新流量统计
