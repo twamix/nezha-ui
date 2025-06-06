@@ -426,11 +426,13 @@ const domObserver = (() => {
     toggleInterval: 5000,
     duration: 500,
     apiUrl: '/api/v1/service',
-    enableLog: false
+    enableLog: true
   };
   // 合并用户自定义配置
   const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
-
+  if (config.enableLog) {
+    console.log('[TrafficScript] 最终配置如下:', config);
+  }
   /**
    * 获取并刷新流量统计
    */
