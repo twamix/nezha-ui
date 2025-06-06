@@ -420,70 +420,84 @@ const domObserver = (() => {
 
 // == 主程序入口 ==
 (function main() {
-  // 延迟初始化，确保 window.TrafficScriptConfig 被其他脚本定义完毕
-  window.addEventListener('DOMContentLoaded', () => {
-    setTimeout(initTrafficScript, 0);
-  });
-  function initTrafficScript() {
-    // 默认配置
-    const defaultConfig = {
-      showTrafficStats: true,
-      interval: 60000,
-      toggleInterval: 5000,
-      duration: 500,
-      apiUrl: '/api/v1/service',
-      enableLog: true
-    };
-    // 合并用户自定义配置
-    const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
-    if (config.enableLog) {
-      console.log(`[TrafficScript] 版本: ${SCRIPT_VERSION}`);
-      console.log('[TrafficScript] 最终配置如下:', config);
-    }
-    /**
-     * 获取并刷新流量统计
-     */
-    function updateTrafficStats() {
-      trafficDataManager.fetchTrafficData(config.apiUrl, config, trafficData => {
-        trafficRenderer.renderTrafficStats(trafficData, config);
-      });
-    }
-  
-    /**
-     * DOM变更处理函数，触发刷新
-     */
-    function onDomChange() {
-      if (config.enableLog) console.log('[main] DOM变化，刷新流量数据');
-      updateTrafficStats();
-      if (!trafficTimer) startPeriodicRefresh();
-    }
-  
-    // 定时器句柄，防止重复启动
-    let trafficTimer = null;
-  
-    /**
-     * 启动周期刷新任务
-     */
-    function startPeriodicRefresh() {
-      if (!trafficTimer) {
-        if (config.enableLog) console.log('[main] 启动周期刷新任务');
-        trafficTimer = setInterval(() => {
-          updateTrafficStats();
-        }, config.interval);
-      }
-    }
-  
-    // 启动内容切换轮播（如时间、百分比）
-    trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
-    // 监听section变化及其子节点变化
-    const sectionDetector = domObserver.startSectionDetector(onDomChange);
-    // 初始化调用一次
-    onDomChange();
-  
-    // 页面卸载时清理监听和定时器
-    window.addEventListener('beforeunload', () => {
-      domObserver.disconnectAll(sectionDetector);
-      if (trafficTimer) clearInterval(trafficTimer);
+  // 默认配置
+  const defaultConfig = {
+    showTrafficStats: true,
+    interval: 60000,
+    toggleInterval: 5000,
+    duration: 500,
+    apiUrl: '/api/v1/service',
+    enableLog: true
+  };
+  // 合并用户自定义配置
+  const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+  if (config.enableLog) {
+    console.log(`[TrafficScript] 版本: ${SCRIPT_VERSION}`);
+    console.log('[TrafficScript] 最终配置如下:', config);
+  }
+  /**
+   * 获取并刷新流量统计
+   */
+  function updateTrafficStats() {
+    trafficDataManager.fetchTrafficData(config.apiUrl, config, trafficData => {
+      trafficRenderer.renderTrafficStats(trafficData, config);
     });
   }
+
+  /**
+   * DOM变更处理函数，触发刷新
+   */
+  function onDomChange() {
+    if (config.enableLog) console.log('[main] DOM变化，刷新流量数据');
+    updateTrafficStats();
+    if (!trafficTimer) startPeriodicRefresh();
+  }
+
+  // 定时器句柄，防止重复启动
+  let trafficTimer = null;
+
+  /**
+   * 启动周期刷新任务
+   */
+  function startPeriodicRefresh() {
+    if (!trafficTimer) {
+      if (config.enableLog) console.log('[main] 启动周期刷新任务');
+      trafficTimer = setInterval(() => {
+        updateTrafficStats();
+      }, config.interval);
+    }
+  }
+
+  // 启动内容切换轮播（如时间、百分比）
+  trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
+  // 监听section变化及其子节点变化
+  const sectionDetector = domObserver.startSectionDetector(onDomChange);
+  // 初始化调用一次
+  onDomChange();
+
+  // 延迟 100ms 后尝试读取用户配置并覆盖
+  setTimeout(() => {
+    const newConfig = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+    // 判断配置是否变化（简单粗暴比较JSON字符串）
+    if (JSON.stringify(newConfig) !== JSON.stringify(config)) {
+      if (config.enableLog) console.log('[main] 100ms后检测到新配置，更新配置并重启任务');
+      config = newConfig;
+
+      // 重新启动周期刷新任务
+      startPeriodicRefresh();
+
+      // 重新启动内容切换轮播（传入新配置）
+      trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
+
+      // 立即刷新数据
+      updateTrafficStats();
+    } else {
+      if (config.enableLog) console.log('[main] 100ms后无新配置，保持原配置');
+    }
+  }, 100);
+  // 页面卸载时清理监听和定时器
+  window.addEventListener('beforeunload', () => {
+    domObserver.disconnectAll(sectionDetector);
+    if (trafficTimer) clearInterval(trafficTimer);
+  });
 })();
