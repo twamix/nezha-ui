@@ -437,6 +437,7 @@ const domObserver = (() => {
     // 合并用户自定义配置
     const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
     if (config.enableLog) {
+      console.log(`[TrafficScript] 版本: ${SCRIPT_VERSION}`);
       console.log('[TrafficScript] 最终配置如下:', config);
     }
     /**
