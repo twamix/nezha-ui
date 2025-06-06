@@ -1,3 +1,4 @@
+const SCRIPT_VERSION = 'v20240606';
 // == 样式注入模块 ==
 // 注入自定义CSS隐藏特定元素
 function injectCustomCSS() {
@@ -419,63 +420,69 @@ const domObserver = (() => {
 
 // == 主程序入口 ==
 (function main() {
-  // 默认配置
-  const defaultConfig = {
-    showTrafficStats: true,
-    interval: 60000,
-    toggleInterval: 5000,
-    duration: 500,
-    apiUrl: '/api/v1/service',
-    enableLog: true
-  };
-  // 合并用户自定义配置
-  const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
-  if (config.enableLog) {
-    console.log('[TrafficScript] 最终配置如下:', config);
-  }
-  /**
-   * 获取并刷新流量统计
-   */
-  function updateTrafficStats() {
-    trafficDataManager.fetchTrafficData(config.apiUrl, config, trafficData => {
-      trafficRenderer.renderTrafficStats(trafficData, config);
+  // 延迟初始化，确保 window.TrafficScriptConfig 被其他脚本定义完毕
+  window.addEventListener('DOMContentLoaded', () => {
+    setTimeout(initTrafficScript, 0);
+  });
+  function initTrafficScript() {
+    // 默认配置
+    const defaultConfig = {
+      showTrafficStats: true,
+      interval: 60000,
+      toggleInterval: 5000,
+      duration: 500,
+      apiUrl: '/api/v1/service',
+      enableLog: true
+    };
+    // 合并用户自定义配置
+    const config = Object.assign({}, defaultConfig, window.TrafficScriptConfig || {});
+    if (config.enableLog) {
+      console.log('[TrafficScript] 最终配置如下:', config);
+    }
+    /**
+     * 获取并刷新流量统计
+     */
+    function updateTrafficStats() {
+      trafficDataManager.fetchTrafficData(config.apiUrl, config, trafficData => {
+        trafficRenderer.renderTrafficStats(trafficData, config);
+      });
+    }
+  
+    /**
+     * DOM变更处理函数，触发刷新
+     */
+    function onDomChange() {
+      if (config.enableLog) console.log('[main] DOM变化，刷新流量数据');
+      updateTrafficStats();
+      if (!trafficTimer) startPeriodicRefresh();
+    }
+  
+    // 定时器句柄，防止重复启动
+    let trafficTimer = null;
+  
+    /**
+     * 启动周期刷新任务
+     */
+    function startPeriodicRefresh() {
+      if (!trafficTimer) {
+        if (config.enableLog) console.log('[main] 启动周期刷新任务');
+        trafficTimer = setInterval(() => {
+          updateTrafficStats();
+        }, config.interval);
+      }
+    }
+  
+    // 启动内容切换轮播（如时间、百分比）
+    trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
+    // 监听section变化及其子节点变化
+    const sectionDetector = domObserver.startSectionDetector(onDomChange);
+    // 初始化调用一次
+    onDomChange();
+  
+    // 页面卸载时清理监听和定时器
+    window.addEventListener('beforeunload', () => {
+      domObserver.disconnectAll(sectionDetector);
+      if (trafficTimer) clearInterval(trafficTimer);
     });
   }
-
-  /**
-   * DOM变更处理函数，触发刷新
-   */
-  function onDomChange() {
-    if (config.enableLog) console.log('[main] DOM变化，刷新流量数据');
-    updateTrafficStats();
-    if (!trafficTimer) startPeriodicRefresh();
-  }
-
-  // 定时器句柄，防止重复启动
-  let trafficTimer = null;
-
-  /**
-   * 启动周期刷新任务
-   */
-  function startPeriodicRefresh() {
-    if (!trafficTimer) {
-      if (config.enableLog) console.log('[main] 启动周期刷新任务');
-      trafficTimer = setInterval(() => {
-        updateTrafficStats();
-      }, config.interval);
-    }
-  }
-
-  // 启动内容切换轮播（如时间、百分比）
-  trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
-  // 监听section变化及其子节点变化
-  const sectionDetector = domObserver.startSectionDetector(onDomChange);
-  // 初始化调用一次
-  onDomChange();
-
-  // 页面卸载时清理监听和定时器
-  window.addEventListener('beforeunload', () => {
-    domObserver.disconnectAll(sectionDetector);
-    if (trafficTimer) clearInterval(trafficTimer);
-  });
 })();
