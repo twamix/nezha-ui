@@ -1,4 +1,4 @@
-const SCRIPT_VERSION = 'v20240606';
+const SCRIPT_VERSION = 'v20250606';
 // == 样式注入模块 ==
 // 注入自定义CSS隐藏特定元素
 function injectCustomCSS() {
@@ -482,13 +482,10 @@ const domObserver = (() => {
     if (JSON.stringify(newConfig) !== JSON.stringify(config)) {
       if (config.enableLog) console.log('[main] 100ms后检测到新配置，更新配置并重启任务');
       config = newConfig;
-
       // 重新启动周期刷新任务
       startPeriodicRefresh();
-
       // 重新启动内容切换轮播（传入新配置）
       trafficRenderer.startToggleCycle(config.toggleInterval, config.duration);
-
       // 立即刷新数据
       updateTrafficStats();
     } else {
