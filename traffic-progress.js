@@ -1,4 +1,4 @@
-const SCRIPT_VERSION = 'v20250606';
+const SCRIPT_VERSION = 'v20250610';
 // == 样式注入模块 ==
 // 注入自定义CSS隐藏特定元素
 function injectCustomCSS() {
