@@ -176,7 +176,7 @@ const trafficRenderer = (() => {
       const targetElement = Array.from(document.querySelectorAll('section.grid.items-center.gap-2'))
         .find(section => {
           const firstText = section.querySelector('p.break-all.font-bold.tracking-tight.text-xs')?.textContent.trim();
-          return firstText === serverName;
+          return firstText === serverName.trim();
         });
       if (!targetElement) return;
 
