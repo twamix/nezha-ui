@@ -1,4 +1,4 @@
-const SCRIPT_VERSION = 'v20250610';
+const SCRIPT_VERSION = 'v20250611';
 // == 样式注入模块 ==
 // 注入自定义CSS隐藏特定元素
 function injectCustomCSS() {
@@ -264,7 +264,7 @@ const trafficRenderer = (() => {
           </div>
           <div class="relative h-1.5">
             <div class="absolute inset-0 bg-neutral-100 dark:bg-neutral-800 rounded-full"></div>
-            <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; background-color: ${progressColor};"></div>
+            <div class="absolute inset-0 bg-emerald-500 rounded-full transition-all duration-300 progress-bar" style="width: ${percentage}%; max-width: 100%; background-color: ${progressColor};"></div>
           </div>
         `;
 
