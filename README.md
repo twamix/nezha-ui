@@ -38,3 +38,8 @@
 /* 源自https://www.nodeseek.com/post-349102-1 */
 <script src="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-ui@main/netstatus-autoshow.js"></script>
 ```
+###### 仪表板的自定义代码 
+```html
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-ui@main/nezha-dashboard.css">
+<script src="https://cdn.jsdelivr.net/gh/ziwiwiz/nezha-ui@main/nezha-dashboard.js"></script>
+```
