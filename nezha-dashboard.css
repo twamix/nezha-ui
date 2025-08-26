@@ -1,0 +1,14 @@
+/* 哪吒探针后台美化 CSS */
+
+/* 自定义字体 */
+* {
+    font-family: 'MiSans';
+}
+h1, h2, h3, h4, h5 {
+    font-family: 'MiSans', sans-serif;
+}
+
+/* 不显示页脚 */
+footer {
+    display: none;
+}
