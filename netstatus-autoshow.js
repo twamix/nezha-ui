@@ -41,6 +41,16 @@
         }
     }
 
+    function tryClickPeak() {
+        const peakBtn = document.querySelector('#Peak');
+        if (peakBtn) {
+            peakBtn.click();
+            console.log('[UserScript] 已点击 Peak 按钮');
+        } else {
+            console.log('[UserScript] 未找到 Peak 按钮');
+        }
+    }
+
     const observer = new MutationObserver(() => {
         const div3 = document.querySelector(selector3);
         const div4 = document.querySelector(selector4);
@@ -53,6 +63,7 @@
         if (isAnyDivVisible && !divVisible) {
             hideSection();
             tryClickButton();
+            setTimeout(tryClickPeak, 300);
         } else if (!isAnyDivVisible && divVisible) {
             hasClicked = false;
         }
