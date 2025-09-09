@@ -15,7 +15,6 @@
 
     let hasClicked = false;
     let divVisible = false;
-    let swapping = false;
 
     function forceBothVisible() {
         const div3 = document.querySelector(selector3);
@@ -42,33 +41,6 @@
         }
     }
 
-    function swapDiv3AndDiv4() {
-        if (swapping) return;
-        swapping = true;
-
-        const div3 = document.querySelector(selector3);
-        const div4 = document.querySelector(selector4);
-        if (!div3 || !div4) {
-          swapping = false;
-          return;
-        }
-
-        const parent = div3.parentNode;
-        if (parent !== div4.parentNode) {
-          swapping = false;
-          return;
-        }
-
-        parent.insertBefore(div4, div3);
-        parent.insertBefore(div3, div4.nextSibling);
-
-        const peakBtn = document.querySelector('#Peak');
-        if (peakBtn) {
-          peakBtn.click();
-        }
-        swapping = false;
-    }
-
     const observer = new MutationObserver(() => {
         const div3 = document.querySelector(selector3);
         const div4 = document.querySelector(selector4);
@@ -81,7 +53,6 @@
         if (isAnyDivVisible && !divVisible) {
             hideSection();
             tryClickButton();
-            setTimeout(swapDiv3AndDiv4, 300);
         } else if (!isAnyDivVisible && divVisible) {
             hasClicked = false;
         }
