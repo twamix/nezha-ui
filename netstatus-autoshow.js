@@ -41,13 +41,16 @@
         }
     }
 
-    function tryClickPeak() {
+    function tryClickPeak(retryCount = 10, interval = 200) {
         const peakBtn = document.querySelector('#Peak');
         if (peakBtn) {
             peakBtn.click();
             console.log('[UserScript] 已点击 Peak 按钮');
+        } else if (retryCount > 0) {
+            console.log('[UserScript] 未找到 Peak 按钮，等待再试...');
+            setTimeout(() => tryClickPeak(retryCount - 1, interval), interval);
         } else {
-            console.log('[UserScript] 未找到 Peak 按钮');
+            console.log('[UserScript] 超过最大重试次数，未找到 Peak 按钮');
         }
     }
 
@@ -63,7 +66,7 @@
         if (isAnyDivVisible && !divVisible) {
             hideSection();
             tryClickButton();
-            setTimeout(tryClickPeak, 300);
+            setTimeout(() => tryClickPeak(15, 200), 300);
         } else if (!isAnyDivVisible && divVisible) {
             hasClicked = false;
         }
