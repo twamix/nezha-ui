@@ -1,10 +1,10 @@
 # nezha-ui
 ##### 后台添加
 ###### 现自用的探针更改 
+```html
 /* 自用的css格式 */
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/twamix/nezha-ui@main/nezha-style1.css">
 /* 自用的探针修改 */
-```
 <script src="https://cdn.jsdelivr.net/gh/twamix/nezha-ui@main/nezha-js1.js"></script>
 ```
 
