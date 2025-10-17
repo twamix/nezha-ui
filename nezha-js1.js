@@ -3,7 +3,7 @@
     window.CustomLogo = 'https://xmix.one/favicon.ico'; 
     window.CustomDesc = 'Love'; 
     window.ShowNetTransfer = true; 
-    /* window.DisableAnimatedMan = true; /* 为 true 则基佬死开, 和下方 CustomIllustration 冲突 */
+    window.DisableAnimatedMan = true; 
     window.CustomIllustration = 'https://xmix.one/fj3EXY7umsyR9NW.webp'; 
     window.FixedTopServerName = true; 
     window.CustomLinks = '[{\"link\":\"https://n.xmix.one/\",\"name\":\"首页\"}]'; /* 自定义导航栏链接 */
