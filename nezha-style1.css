@@ -1,0 +1,38 @@
+    /* 自定义字体, 注意需要在 JS 中引入相应字体 */
+    * {
+        font-family: 'MiSans';
+    }
+    h1, h2, h3, h4, h5 {
+        font-family: 'MiSans', sans-serif;
+    }
+
+    /* 背景压暗和模糊, 开了背景图建议开启 */
+    .dark .bg-cover::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .light .bg-cover::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        backdrop-filter: blur(6px);
+        background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    /* 不显示右上角语言切换按钮 */
+    [id="radix-:r0:"] {
+        display: none;
+    }
+
+    /* 不显示右上角主题切换按钮 */
+    [id="radix-:r2:"] {
+        display: none;
+    }
+
+    /* 不显示页脚, 请保留哪吒版权信息, 与上方 JS 中的 修改页脚文本 冲突 */
+    footer {
+        display: none;
+    }
